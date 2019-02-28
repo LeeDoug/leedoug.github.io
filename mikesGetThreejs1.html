@@ -19,14 +19,13 @@
         <script src="lib/utilities.js"></script>
         <!--<script src="fonts/helvetiker_regular.typeface.js"></script>-->
 		<script type="text/javascript">
-		/**
 		function getParameterByName(name) {
 			var match = RegExp('[?&]' + name + '=([^&]*)')
 							.exec(window.location.search);
 			return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         }
         function init() {
-		    var loadScript = getParameterByName('load=js/colorCubeMatrix075.js');
+		    var loadScript = getParameterByName('load');
 		    if (typeof loadScript !== 'undefined') {
 			    var thescript = document.createElement('script');
 			    thescript.setAttribute('type','text/javascript');
@@ -34,22 +33,11 @@
                 thescript.setAttribute('onerror',"alert('script not found')");
 			    document.getElementsByTagName('head')[0].appendChild(thescript);
 		    }
-        }**/
-		
-		function addScript(filename)
-{
- var scriptBlock=document.createElement('script')
- scriptBlock.setAttribute("type","text/javascript")
- scriptBlock.setAttribute("src", filename)
- document.getElementsByTagName("head")[0].appendChild(scriptBlock)
-}
-
+        }
 		</script>
 	</head>
-	<body onload="addScript('../js/anim080.js')">
-	<!--
 	<body onload="init()">
         <div id="container">
-        </div>-->
+        </div>
 	</body>
 </html>
