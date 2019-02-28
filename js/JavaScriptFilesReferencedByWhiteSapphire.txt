@@ -1,0 +1,23 @@
+* means based on threejs r89 (released December 18, 2017)
+
+anim080.js *
+anim081.js *
+anim082.js *
+closedPyramid2.js *
+colorCubeMatrix075F.js *
+cube020.js *
+cubeMatrix070A.js *
+cubeWithVertexNumbers.js ? Must fix font loading
+flatSmoothShading183.js *
+openPyramidText.js ? Must fix font loading
+oscillatingSquares4.js *
+phongLambertShading188.js *
+someGeoms037.js *
+trans060.js *
+trans060B.js *
+trans060C.js *
+triangle015.js *
+triangle016.js *
+triangle020.js *
+triangle022.js *
+triangleStroke006.js *
