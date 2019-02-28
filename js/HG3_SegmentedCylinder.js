@@ -1,4 +1,4 @@
-#4 (HGG.3)
+
 
 // HG.3 Segmented cylinder geometry
 
