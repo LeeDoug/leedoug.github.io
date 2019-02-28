@@ -1,4 +1,3 @@
-#5 (HGG.4)
 
 // HG.4 Knotted cylinder geometry
 
@@ -157,6 +156,3 @@ function createKnottedCylinder(n, heights, scales, isCappedBottom, isCappedTop) 
     geom.computeFaceNormals();
     return geom;
 }
-
-
-
