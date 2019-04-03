@@ -1,0 +1,168 @@
+
+<html>
+<head>
+	<script src="lib/three.min.js"></script>
+		<script src="lib/Detector.js"></script>
+		<script src="lib/Coordinates.js"></script>
+		<script src="lib/OrbitControls.js"></script>
+		<script src="lib/stats.min.js"></script>
+		<script src="lib/dat.gui.min.js"></script>
+		<script src="lib/tween.min.js"></script>
+        <script src="lib/utilities.js"></script>
+		<script src="lib/TrackBall.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<script>
+    
+window.onload = init;
+	
+    var camera;
+	var earth;
+	var moon;
+    var controller;
+    var rotate;var rotate2;
+	var scene;
+	var renderer;
+    function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x000000, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMapEnabled = true;
+       
+        var sun = new THREE.SphereGeometry(7, 20, 20);
+        var sunMat = new THREE.MeshLambertMaterial({color: 0xFFFF00});
+        var sunMesh = new THREE.Mesh(sun, sunMat);
+        
+		sunMesh.receiveShadow = true;
+        
+		sunMesh.position.set(0, 1, 0);
+		
+		sunMesh.rotation.x -= 0.01 * 2;
+		
+        scene.add(sunMesh);
+		
+		var earthsphere = new THREE.SphereGeometry(2, 10, 10);
+        var earthMat = new THREE.MeshLambertMaterial({color: 0x0000FF});
+       
+	    earth = new THREE.Mesh(earthsphere, earthMat);
+        
+		earth.receiveShadow = true;
+        
+		earth.position.set(1, 11, 11);
+        
+		scene.add(earth);
+		
+		var moonsphere = new THREE.SphereGeometry(0.5, 5, 5);
+        var moonMat = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+        
+		moon = new THREE.Mesh(moonsphere, moonMat);
+        
+		moon.receiveShadow = true;
+        
+		moon.position.set(1, 5, 6);
+        
+		scene.add(moon);
+		
+        rotate = new THREE.Object3D();
+        
+		rotate.rotation.z = 0.01;
+        
+		sunMesh.add(rotate);
+		
+		rotate2 = new THREE.Object3D();
+		
+		rotate2.rotation.y=5;
+        rotate2.rotation.z= 0.02;
+        
+		earth.add(rotate2);
+		
+		rotate2.add(moon);
+      
+        rotate.add(earth);
+
+        var light = new THREE.SpotLight();
+        
+		light.position.set(30, 4, 40);
+        light.castShadow = false;
+        light.shadowMapEnabled = false;
+        
+		light.shadowCameraNear = 20;
+        light.shadowCameraFar = 70;
+        
+        scene.add(light);
+        
+        camera.position.x = 25;
+        camera.position.y = 26;
+        camera.position.z = 5;
+        
+		camera.lookAt(scene.position);
+        
+        document.body.appendChild(renderer.domElement);
+        
+		
+		controller = new function () {
+			this.rotationX = 0;
+            this.rotationY = 0;
+            this.rotationZ = 0;
+            this.rotationSpeedX = 0.01;
+            this.rotationSpeedY = 0.01;
+            this.rotationSpeedZ = 0.01;
+        };
+		
+        controls(controller);
+        render();
+    }
+	
+
+    function controls(Object) {
+        
+		var gui = new dat.GUI();
+        
+		gui.add(Object, 'rotationSpeedX', -0.3, 0.3);
+        gui.add(Object, 'rotationSpeedY', -0.3, 0.3);
+        gui.add(Object, 'rotationSpeedZ', -0.3, 0.3);
+        
+		gui.add(Object, 'rotationX').onChange(function (v) {
+            rotate2.rotation.x = v
+        });
+		
+        gui.add(Object, 'rotationY').onChange(function (v) {
+            rotate.rotation.y = v
+        });
+		
+        gui.add(Object, 'rotationZ').onChange(function (v) {
+            rotate2.rotation.z = v
+        });
+		gui.close();
+       
+    }
+	
+	
+    function render() {
+        
+		renderer.render(scene, camera);
+		
+        rotate2.rotation.x += controller.rotationSpeedX;
+        rotate.rotation.y += controller.rotationSpeedY;
+        rotate2.rotation.z += controller.rotationSpeedZ;
+        controller.rotationX = rotate2.rotation.x;
+        controller.rotationY = rotate.rotation.y;
+        controller.rotationZ = rotate2.rotation.z;
+        
+        requestAnimationFrame(render);
+    }
+   
+</script>
+<body>
+</body>
+</html>
+
+
+
