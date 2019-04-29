@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+     <head>
+		<meta charset="utf-8">
+       
+		<style>
+		
+					body {
+				color: "white";
+				font-size:1em;
+				text-align:center;
+				background-color: "white";
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px; width: 33%;
+				background-color: "white";
+				opacity: 5;
+				color: #eee;
+				text-align: justify;
+				margin:1%;
+				transition: all 0.5s ease;
+			}
+
+			a {
+				color: #0af;
+			}
+			.folder:nth-of-type(2){
+				display: none;
+
+			}
+			header{
+				position: fixed;
+				color: #eee;
+				background-color: "white";
+				opacity: 0.9;
+				width: 100%;
+			}
+			header img{
+				display: none;
+				margin: 0;
+			}	
+
+		
+			#PX{
+				position: absolute;
+			    right: 15px;
+			    text-align: left;
+			    top: 333px;
+			    width: 555px;
+			    background-color: #111;
+			    color: #eee;
+				border-left: 3px solid #e61d5f;			    
+			}
+			
+			#language{
+				position: absolute;
+			    right: 15px;
+			    text-align: left;
+			    top: 255px;
+			    width: 305px;
+			    background-color: #111;
+			    color: #eee;
+				border-left: 3px solid #e61d5f;			    
+			}
+			#language ul{
+				list-style: none;
+				margin: 0;
+			}
+			#language ul li{
+				display: block;
+				border-bottom: 5px solid #2c2c2c;
+			}
+			#language a{
+				color: #fff;
+				cursor: pointer;
+			}
+			#language a:hover{
+				background-color: #000;
+			}
+			#ljs-widget{
+				display: none;
+			}
+			#language p{
+				color: #eee;
+				text-align: center;
+				border-bottom: 1px solid #2c2c2c;			
+			}
+			#icon {
+			padding: 1%;
+			width: 10%;
+			}
+			#volumeimg{
+			position: absolute;
+			left: 0;
+			top:40%;
+			background-color: #222;
+				opacity: 0.9;
+				color: #eee;
+			}
+			#iconstop{
+			padding: 1%;
+			width: 10%;
+			}
+			@media print {
+				header{display: none;}
+			}
+			#parent{
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+			.element, .outer-container {
+			width: 200px;
+			height: 200px;
+			}
+ 
+			.outer-container {
+			 border: 5px solid purple;
+			 position: relative;
+			 overflow: hidden;
+			}
+			 
+			.inner-container {
+			 position: absolute;
+			 left: 0;
+			 overflow-x: hidden;
+			 overflow-y: scroll;
+			}
+			 
+			.inner-container::-webkit-scrollbar {
+			 display: none;
+			}
+			}
+		</style>		
+	</head>
+	<body>
+		<header>
+            <h1>Cardiovascular System</h1>
+            <img id="menu" src="images/menu.png" alt="menu" > 
+        </header> 
+		<div id="container"></div>
+		
+		<div id="info">
+		
+		</div>
+		<div id="volumeimg"></div>
+		
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script src="build/three.min.js"></script>
+		
+		<script src="js/UCSCharacter.js"></script>
+
+		<script src="js/Detector.js"></script>
+
+		
+		<script src='js/libs/dat.gui.min.js'></script>
+				
+		<script src="js/controls/OrbitControls.js"></script>
+		
+		<script>
+			
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+
+			var container;
+
+			var camera, scene;
+			var renderer;
+			
+			var mesh;
+
+			var mouseX = 0, mouseY = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+			var clock = new THREE.Clock();
+			
+			var gui, skinConfig, morphConfig;
+				
+			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+			init();
+			animate();
+			var geometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+			var material = new THREE.MeshBasicMaterial( {color: 0x660c26} );
+			var cylinder = new THREE.Mesh( geometry, material );
+			cylinder.position.x = 0.3 ; 
+			cylinder.position.y = 0.2; 
+			cylinder.position.z = 0.3;
+			scene.add( cylinder );
+			function init() {
+
+				container = document.getElementById( 'container' );
+
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+				camera.position.set( 2000, 5000, 5000 );
+
+				scene = new THREE.Scene();
+
+				// LIGHTS
+
+				var light = new THREE.DirectionalLight( 0xffffff, 1 );
+				light.position.set( 0, 140, 500 );
+				light.position.multiplyScalar( 1.1 );
+				light.color.setHSL( 0.6, 0.075, 1 );
+				scene.add( light );
+
+				//
+
+				var light = new THREE.DirectionalLight( 0xffffff, 1 );
+				light.position.set( 0, -1, 0 );
+				scene.add( light );
+
+				// RENDERER
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( 0xffffff );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+				container.appendChild( renderer.domElement );
+
+				// CHARACTER
+
+				character = new THREE.UCSCharacter();
+				character.onLoadComplete = function() {
+					console.log( "Load Complete" );
+					console.log( character.numSkins + " skins and " + character.numMorphs + " morphtargets loaded." );
+					gui = new dat.GUI();
+					setupSkinsGUI();
+					gui.width = 300;
+					gui.close();
+				}
+				
+				var loader = new THREE.XHRLoader();
+				loader.load("models/skinned/UCS_config.json", function ( text ) {
+
+					var config = JSON.parse( text );
+					character.loadParts( config );
+					scene.add( character.root );
+
+				} );
+				
+	
+
+
+				window.addEventListener( 'resize', onWindowResize, false );
+				
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.center.set( 0, 3000, 0);
+
+				controls.addEventListener( 'change', render );
+			
+			}
+			
+			function setupSkinsGUI() {
+			
+				var skinGui = gui.addFolder( "Organ System" );
+				
+				skinConfig = {
+					wireframe: false
+				};
+				
+				var skinCallback = function( index ) {
+					return function () {
+						character.setSkin( index );
+					};
+				}
+
+				for ( var i = 0; i < character.numSkins; i++ ) {
+					var name = character.skins[ i ].name;
+					skinConfig[ name ] = skinCallback( i );
+				}
+				
+				for ( var i = 0; i < character.numSkins; i++ ) {
+					skinGui.add( skinConfig, character.skins[i].name );
+				}
+				
+				//skinGui.open();
+
+			}
+			
+			function setupMorphsGUI() {
+				
+				var morphGui = gui.addFolder( "Morphs" );
+				
+				morphConfig = {
+				};
+				
+				var morphCallback = function( index ) {
+					return function () {
+						character.updateMorphs( morphConfig );
+					}
+				}
+				
+				for ( var i = 0; i < character.numMorphs; i ++ ) {
+					var morphName = character.morphs[ i ];
+					morphConfig[ morphName ] = 0;
+				}
+				
+				for ( var i = 0; i < character.numMorphs; i ++ ) {
+					morphGui.add( morphConfig, character.morphs[ i ] ).min( 0 ).max( 100 ).onChange( morphCallback( i ) );
+				}
+				
+				morphGui.open();
+			
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				mouseX = ( event.clientX - windowHalfX ) * 10;
+				mouseY = ( event.clientY - windowHalfY ) * 10;
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				controls.update();
+
+				render();
+
+			}
+
+			function render() {
+
+				var delta = 0.75 * clock.getDelta();
+
+				// update skinning
+
+				THREE.AnimationHandler.update( delta );
+
+				renderer.render( scene, camera );
+
+			}
+		</script>
+		
+        <script src="js/script.js"></script>		
+		<input type="hidden" id="curlang" value="english" />
+			<p>
+			Cardio</p>
+			<div id="container"></div>
+		<div id="language">
+		
+		<p><font size = "2" color ="red"><a href="LinkJQ.html?load=js/CYL.js"><font color = "red">Arteries</a></p>
+		
+		
+		
+		<div id="container"></div>
+		<div id="language">
+		
+		<p><font size = "2" color ="blue"><a href="LinkJQ.html?load=js/CYLVE.js"><font color = "blue">Veins</a></p>
+		
+		
+	</body>
+	
+	
+</html>
