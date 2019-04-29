@@ -93,12 +93,14 @@ renderer.setClearColor(0x000000, 1.0);
 // set the camera position for looking at our open box
 // and point the camera at our target
 var target = new THREE.Vector3(5, 0, 0);
-camera = new THREE.PerspectiveCamera(40, canvasRatio, 1, 1000);
-camera.position.set(-5, 20, 5);
+camera = new THREE.PerspectiveCamera(1000, canvasRatio*2, 1, 1000);
+camera.position.set(35, 5, 5);
 camera.lookAt(target);
 cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
 cameraControls.target = target;
 cameraControls.center = target;
+
+
 }
 // end
 
