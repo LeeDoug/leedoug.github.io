@@ -1,103 +1,98 @@
 
-var camera, scene, renderer,vertex;
+var camera, scene, renderer;
 var cameraControls;
 var clock = new THREE.Clock();
+
+var box = null;
+var curAngle = 0;	// current rotation around y axis 
+var angleStep = Math.PI/2;  
 
 // SC1. Cube with per vertex colors
 function createScene() {
     // geometry
-    var geom = new THREE.CubeGeometry(90, 90, 90);
-    // vertex colors
-    vertexColors = []; var c;
-    //face
-    var face;
-    var findex=['a','b','c','d'];
-    var p;var s = 100;
+    var geometry = new THREE.Geometry(2,2,2);
 
-    // each face in geom, assign colors to its vertices
-    // look into face.vertexColors array
+// Make the simplest shape possible: a triangle.
+geometry.vertices.push(
+    new THREE.Vector3(-10,  10, 0),
+    new THREE.Vector3(-10, -10, 0),
+    new THREE.Vector3( 10, -10, 0)
+);
 
-    for ( var i = 0; i < geom.vertices.length; i++ ){
-        p = geom.vertices[ i ];
-        c = new THREE.Color( 0xffffff );
-        c.setHSL( Math.random(), 0.9, 0.3 );
-        geom.colors[i] = c; 
-    }
+// Note that I'm assigning the face to a variable
+// I'm not just shoving it into the geometry.
+var face = new THREE.Face4(0, 1, 2,3);
 
-    for (var i = 0; i < geom.faces.length; i++) {
-        var face = geom.faces[i];
-        for( j = 0; j < 3; j++ ){
-            vertex = face[ findex[ j ] ];
-            face.vertexColors[ j ] = geom.colors[ vertex ];
-        }
-    }
-    // create mesh and add to scene
+// Assign the colors to the vertices of the face.
+face.vertexColors[0] = new THREE.Color(0xff0000); // red
+face.vertexColors[1] = new THREE.Color(0x00ff00); // green
+face.vertexColors[2] = new THREE.Color(0x0000ff); // blue
+face.vertexColors[3]= new THREE.Color(0x0000ff);
+// Now the face gets added to the geometry.
+geometry.faces.push(face);
 
-    var mat = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
-    var mesh = new THREE.Mesh(geom, mat);
+// Using this material is important.
+var material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
+
+var mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 }
 
-function init() {
-var canvasWidth = window.innerWidth;
-var canvasHeight = window.innerHeight;
-var canvasRatio = canvasWidth / canvasHeight;
-
-scene = new THREE.Scene();
-
-renderer = new THREE.WebGLRenderer({antialias : true, preserveDrawingBuffer: true});
-renderer.gammaInput = true;
-renderer.gammaOutput = true;
-renderer.setSize(canvasWidth, canvasHeight);
-// set the clear color to black, for our open box scene
-renderer.setClearColor(0x000000, 1.0);
-
-// set the camera position for looking at our open box
-// and point the camera at our target
-var target = new THREE.Vector3(0, 0, 0);
-camera = new THREE.PerspectiveCamera(40, canvasRatio, 1, 1000);
-camera.position.set(200,20,100);
-camera.lookAt(target);
-cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
-cameraControls.target = target;
-cameraControls.center = target;
-}
-// end
-
 function animate() {
-window.requestAnimationFrame(animate);
-render();
+	window.requestAnimationFrame(animate);
+	render();
 }
+
 
 function render() {
-var delta = clock.getDelta();
-cameraControls.update(delta);
-renderer.render(scene, camera);
+	var delta = clock.getDelta();
+	curAngle += (angleStep * delta);
+    if (curAngle >= 2*Math.PI)
+        curAngle -= 2*Math.PI;
+	//box.rotation.z = curAngle;
+
+	cameraControls.update(delta);
+	renderer.render(scene, camera);
 }
 
-function addToDOM() {
-var container = document.getElementById('container');
-var canvas = container.getElementsByTagName('canvas');
-if (canvas.length>0) {
-    container.removeChild(canvas[0]);
-}
-container.appendChild( renderer.domElement );
+
+function init() {
+	var canvasWidth = window.innerWidth;
+	var canvasHeight = window.innerHeight;
+    var canvasRatio = canvasWidth / canvasHeight;
+
+    scene = new THREE.Scene();
+
+	renderer = new THREE.WebGLRenderer({antialias : true});
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
+	renderer.setSize(canvasWidth, canvasHeight);
+	renderer.setClearColor(0x0, 1.0);
+
+	camera = new THREE.PerspectiveCamera(40, canvasWidth/canvasHeight, 1, 1000);
+	camera.position.set(0, 0, 20);
+	camera.lookAt(new THREE.Vector3(0, 0, 0));
+	cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
 }
 
 function showGrids() {
     Coordinates.drawAllAxes({axisLength:11, axisRadius:0.05});
 } 
 
-try {
-init();
-showGrids();
-createScene();
-addToDOM();
-render();
-animate();
-} catch(e) {
-var errorMsg = "Error: " + e;
-document.getElementById("msg").innerHTML = errorMsg;
+
+function addToDOM() {
+    	var container = document.getElementById('container');
+	var canvas = container.getElementsByTagName('canvas');
+	if (canvas.length>0) {
+		container.removeChild(canvas[0]);
+	}
+	container.appendChild( renderer.domElement );
 }
 
 
+
+	init();
+    showGrids();
+	createScene();
+	addToDOM();
+	animate();
