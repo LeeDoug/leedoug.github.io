@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <style type="text/css">
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+            #loading {
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   position: fixed;
+   display: block;
+   opacity: 0.7;
+   background-color: #fff;
+   z-index: 99;
+   text-align: center;
+}
+
+#loading-image {
+  position: absolute;
+  top: 100px;
+  left: 240px;
+  z-index: 100;
+}
+        </style>
+        <link rel="shortcut icon" href="#" />
+        <!--<link rel="shortcut icon" href="favicon.ico" /> -->
+		<script src="lib/three.min.js"></script>
+		<script src="lib/Detector.js"></script>
+		<script src="lib/Coordinates.js"></script>
+		<script src="lib/OrbitControls.js"></script>
+		<script src="lib/stats.min.js"></script>
+		<script src="lib/dat.gui.min.js"></script>
+		<script src="lib/tween.min.js"></script>
+        <script src="lib/utilities.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="js/scripts.js"></script>
+        <!--<script src="fonts/helvetiker_regular.typeface.js"></script>-->
+		<script type="text/javascript">
+
+		function getParameterByName(name) {
+			var match = RegExp('[?&]' + name + '=([^&]*)')
+							.exec(window.location.search);
+			return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+        }
+        
+        function init() {
+		    var loadScript = getParameterByName('load');
+		    if (typeof loadScript !== 'undefined') {
+			    var thescript = document.createElement('script');
+			    thescript.setAttribute('type','text/javascript');
+			    thescript.setAttribute('src',loadScript);
+                thescript.setAttribute('onerror',"alert('script not found')");
+			    document.getElementsByTagName('head')[0].appendChild(thescript);
+		    }
+        }
+
+		</script>
+	</head>
+
+  
+	<body onload="init()">
+        <div id="container">
+        </div>
+        
+	</body>
+
+
+  <!--
+
+	<div id="loading">
+  <img id="loading-image" src="ajax-loader.gif" alt="Loading..." />
+
+  <script language="javascript" type="text/javascript">
+     $(window).load(function() {
+     $('#loading').hide();
+  });
+</script>
+</div>-->
+<!--
+<body>
+  <div id="overlay">
+     <img src="ajax-loader.gif" alt="Loading" />
+     Loading...
+</div>
+<script language = "javascript" type="text/javascript">
+  
+  $(window).load(function(){
+        
+   $('#overlay').fadeOut();
+});
+
+</script>
+</body>-->
+
+</html>
